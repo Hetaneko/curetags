@@ -20,7 +20,7 @@ from modules.api import api
 import cudf
 
 def cureTagsV1(tag):
-  CSV_PATH = "/content/tagsv3.csv"
+  CSV_PATH = "./tagsv3.csv"
 
   processed_tags = set()
 
@@ -54,7 +54,7 @@ def cureTagsV1(tag):
   return newtags
 
 def cureTagsV2(tag, keeptags):
-  CSV_PATH = "/content/tagsv2.csv"
+  CSV_PATH = "./tagsv2.csv"
   remcategs = ["FACE_CHARACTERISTIC","GENERAL_CHARACTERISTIC","RACE"]
   processed_tags = set()
 
