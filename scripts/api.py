@@ -74,7 +74,7 @@ def cureTagsV2(tag, keeptags):
   valid_colv1 = gdf['col1'].str.lower().str.replace('_', ' ').str.strip()
   valid_colv2 = ~valid_colv1.isin(valid_colv1)
   valid_col0 = gdf['col0'].isin(remcategs)
-  matches = processed_col1.isin(list(processed_tags))  & valid_col0 & valid_colv2
+  matches = processed_col1.isin(list(processed_tags))  & valid_col0
 
   found_pairs = gdf[matches][['col0', 'col1']].drop_duplicates().to_pandas()
 
