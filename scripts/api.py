@@ -104,7 +104,7 @@ def dtg_api(_: gr.Blocks, app: FastAPI):
       for i,tag in enumerate(tags):
         taglist.append(tag["tags"]["tag"])
       newtags = cureTagsV1(taglist)
-      newtags = cureTagsV2(newtags)
+      newtags = cureTagsV2(newtags, keep_tags)
       for i,tag in enumerate(tags):
         tagst[i]["tags"]["tag"] = taglist[i]
       return tagst
