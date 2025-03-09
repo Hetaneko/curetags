@@ -21,7 +21,7 @@ import cudf
 
 def cureTagsV1(tag):
   
-  CSV_PATH = pathlib.Path(__file__).parent+"/tagsv3.csv"
+  CSV_PATH = pathlib.Path(__file__).parent / "tagsv3.csv"
 
   processed_tags = set()
 
@@ -55,7 +55,7 @@ def cureTagsV1(tag):
   return newtags
 
 def cureTagsV2(tag, keeptags):
-  CSV_PATH = pathlib.Path(__file__).parent+"/tagsv2.csv"
+  CSV_PATH = pathlib.Path(__file__).parent / "tagsv2.csv"
   remcategs = ["FACE_CHARACTERISTIC","GENERAL_CHARACTERISTIC","RACE"]
   processed_tags = set()
 
