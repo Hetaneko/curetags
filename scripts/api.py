@@ -74,7 +74,7 @@ def cureTagsV2(tag, keeptags):
   valid_colv1 = gdf['col1'].str.lower().str.replace('_', ' ').str.strip()
   valid_colv2 = ~valid_colv1.isin(valid_colv1)
   valid_col0 = gdf['col0'].isin(remcategs)
-  matches = processed_col1.isin(list(processed_tags))  & valid_col0
+  matches = processed_col1.isin(list(processed_tags))  & valid_col0 & valid_colv2
 
   found_pairs = gdf[matches][['col0', 'col1']].drop_duplicates().to_pandas()
 
@@ -106,7 +106,7 @@ def dtg_api(_: gr.Blocks, app: FastAPI):
       newtags = cureTagsV1(taglist)
       newtags = cureTagsV2(newtags, keep_tags)
       for i,tag in enumerate(tags):
-        tagst[i]["tags"]["tag"] = taglist[i]
+        tagst[i]["tags"]["tag"] = newtags[i]
       return tagst
 try:
     import modules.script_callbacks as script_callbacks
