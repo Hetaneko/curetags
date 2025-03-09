@@ -72,7 +72,7 @@ def cureTagsV2(tag, keeptags):
 
   processed_col1 = gdf['col1'].str.lower().str.replace('_', ' ').str.strip()
   valid_colv1 = gdf['col1'].str.lower().str.replace('_', ' ').str.strip()
-  valid_colv2 = ~valid_colv1.isin(valid_colv1)
+  valid_colv2 = ~valid_colv1.isin(keeptags)
   valid_col0 = gdf['col0'].isin(remcategs)
   matches = processed_col1.isin(list(processed_tags))  & valid_col0 & valid_colv2
 
