@@ -93,7 +93,7 @@ def cureTagsV2(tag, keeptags):
   return newtags
 
 def dtg_api(_: gr.Blocks, app: FastAPI):
-    @app.post("/dtg/process")
+    @app.post("/mikww/curetags")
     async def dtg(
         tags: list = Body("query", title='tags'),
         keep_tags: list = Body("none", title='keep_tags'),
