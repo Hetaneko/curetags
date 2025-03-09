@@ -58,7 +58,11 @@ def cureTagsV2(tag, keeptags):
   CSV_PATH = pathlib.Path(__file__).parent / "tagsv2.csv"
   remcategs = ["FACE_CHARACTERISTIC","GENERAL_CHARACTERISTIC","RACE"]
   processed_tags = set()
-
+  processed_keeptags = set()
+  
+  for t in keeptags:
+        for subtag in t.split(","):
+            processed_keeptags.add(subtag.lower().replace("_", " ").strip())
   for t in tag:
       for subtag in t.split(","):
           processed_tags.add(subtag.lower().replace("_", " ").strip())
@@ -71,8 +75,7 @@ def cureTagsV2(tag, keeptags):
   )
 
   processed_col1 = gdf['col1'].str.lower().str.replace('_', ' ').str.strip()
-  valid_colv1 = gdf['col1'].str.lower().str.replace('_', ' ').str.strip()
-  valid_colv2 = ~valid_colv1.isin(keeptags)
+  valid_colv2 = ~processed_col1.isin(list(processed_keeptags))
   valid_col0 = gdf['col0'].isin(remcategs)
   matches = processed_col1.isin(list(processed_tags))  & valid_col0 & valid_colv2
 
