@@ -54,9 +54,11 @@ def cureTagsV1(tag):
 
   return newtags
 
-def cureTagsV2(tag, keeptags):
+def cureTagsV2(tag, keeptags, remcloth):
   CSV_PATH = pathlib.Path(__file__).parent / "tagsv2.csv"
   remcategs = ["FACE_CHARACTERISTIC","GENERAL_CHARACTERISTIC","RACE"]
+  if remcloth:
+    remcategs.append("CLOTHING")
   processed_tags = set()
   processed_keeptags = set()
   
@@ -96,20 +98,65 @@ def cureTagsV2(tag, keeptags):
 
   return newtags
 
+def getFaceTags(tag, keeptags):
+  CSV_PATH = pathlib.Path(__file__).parent / "tagsv2.csv"
+  remcategs = ["FACE_EXPRESSION","GENERAL_EXPRESSION"]
+  processed_tags = set()
+  processed_keeptags = set()
+  
+  for t in keeptags:
+        for subtag in t.split(","):
+            processed_keeptags.add(subtag.lower().replace("_", " ").strip())
+  for t in tag:
+      for subtag in t.split(","):
+          processed_tags.add(subtag.lower().replace("_", " ").strip())
+
+  gdf = cudf.read_csv(
+      CSV_PATH,
+      header=None,
+      dtype={0: 'str',1:'str'},  
+      names=['col0','col1']
+  )
+
+  processed_col1 = gdf['col1'].str.lower().str.replace('_', ' ').str.strip()
+  valid_colv2 = ~processed_col1.isin(list(processed_keeptags))
+  valid_col0 = gdf['col0'].isin(remcategs)
+  matches = processed_col1.isin(list(processed_tags))  & valid_col0 & valid_colv2
+
+  found_pairs = gdf[matches][['col0', 'col1']].drop_duplicates().to_pandas()
+
+  foundtags = []
+  for _, row in found_pairs.iterrows():
+    foundtags.append(row['col1'].lower().replace("_", " ").strip())
+
+  newtags = []
+  for t in tag:
+    newtag = []
+    for ftp in t.split(","):
+        if ftp.lower().replace("_", " ").strip() in foundtags:
+          newtag.append(ftp)
+    newtags.append(",".join(newtag))
+
+
+  return newtags
+
 def dtg_api(_: gr.Blocks, app: FastAPI):
     @app.post("/mikww/curetags")
     async def dtg(
         tags: list = Body("query", title='tags'),
         keep_tags: list = Body("none", title='keep_tags'),
+        remcloth: bool = Body(False, title='remcloth'),
     ):
       tagst = tags
       taglist = []
       for i,tag in enumerate(tags):
         taglist.append(tag["tags"]["tag"])
       newtags = cureTagsV1(taglist)
-      newtags = cureTagsV2(newtags, keep_tags)
+      newtags = cureTagsV2(newtags, keep_tags, remcloth)
+      facetags = getFaceTags(newtags, keep_tags)
       for i,tag in enumerate(tags):
         tagst[i]["tags"]["tag"] = newtags[i]
+        tagst[i]["tags"]["faceprompt"] = facetags[i]
       return tagst
 try:
     import modules.script_callbacks as script_callbacks
